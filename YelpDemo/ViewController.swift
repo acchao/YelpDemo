@@ -22,7 +22,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var searchBar: UISearchBar!
 
     var restaurants:[Restaurant] = []
+
+    // Search Queries
     var searchTerm: String!
+    var sort: Int = 0
+    var categories: String! = ""
+    var radius: Int = 800
+    var deals: Bool = false
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -47,9 +53,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // Reloads the Table View with Box Office Movies
     func reloadTableView()
     {
-        client.searchWithTerm(self.searchTerm, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+        client.searchWithTerm(self.searchTerm, sort: self.sort, categories: self.categories, radius: self.radius, deals: self.deals, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var restaurantDictionaries = (response as NSDictionary)["businesses"] as [NSDictionary]
 
+            self.restaurants = []
             self.restaurants = restaurantDictionaries.map({ (business: NSDictionary) -> Restaurant in
                 Restaurant(dictionary: business)
             })
@@ -81,6 +88,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     }
 
+    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+        yelpTableView.reloadRowsAtIndexPaths(yelpTableView.indexPathsForVisibleRows()!, withRowAnimation: UITableViewRowAnimation.None)
+    }
+
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
@@ -103,6 +114,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
 
     func filterViewControllerSearchButtonClicked(filterViewController: FilterViewController) {
+        self.sort = filterViewController.sort
+        self.categories = filterViewController.categories
+        self.radius = filterViewController.radius
+        self.deals = filterViewController.deals
         self.reloadTableView()
     }
 
