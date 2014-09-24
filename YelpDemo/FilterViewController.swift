@@ -50,7 +50,10 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         Filter(title: "Sort By", filterType: FilterType.Select, isExpanded: false, filters: ["Best Match", "Distance", "Highest Rated"]),
         Filter(title: "Radius", filterType: FilterType.Select, isExpanded: false, filters: [".5 miles", "1 mile", "5 miles"]),
         Filter(title: "General Features", filterType: FilterType.Switch, isExpanded: true, filters: ["Open Now", "Hot & New", "Offering a Deal", "Delivery"]),
-        Filter(title: "Categories", filterType: FilterType.Select, isExpanded: false, filters: ["Show All"])
+        Filter(title: "Categories", filterType: FilterType.Switch, isExpanded: false, filters: ["breakfast_brunch",
+            "british", "buffets", "bulgarian", "burgers", "burmese", "cafes", "cafeteria", "cajun", "cambodian",
+            "newcanadian", "canteen", "caribbean", "dominican", "haitian", "puertorican", "trinidadian",
+            "catalan", "Collapse All"])
     ]
 
 
@@ -95,20 +98,14 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var section = filters[section]
-        switch section.filterType {
-        case FilterType.Select:
-            if (section.isExpanded){
-                return section.filters.count
-            } else {
-                return 1
-            }
-        case FilterType.Switch:
+        if (section.isExpanded){
             return section.filters.count
-        default:
-            break
+        } else {
+            return 1
         }
     }
 
+    // Setup each Cell
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
         tableView.estimatedRowHeight = 50
@@ -117,17 +114,28 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         var cell = tableView.dequeueReusableCellWithIdentifier("FilterCell") as FilterCell
         var section = filters[indexPath.section] as Filter
 
-        if (!section.isExpanded) {
-            cell.label.text = section.selected
-        } else {
-            cell.label.text = section.filters[indexPath.row]
-        }
+        cell.label.text = section.filters[indexPath.row]
 
         switch section.filterType {
         case FilterType.Select:
+            if (!section.isExpanded) {
+                cell.label.text = section.selected
+            }
             cell.filterSwitch.hidden = true
+            break
         case FilterType.Switch:
-            cell.filterSwitch.hidden = false
+            if (!section.isExpanded) {
+                cell.label.text = "Show All"
+                cell.filterSwitch.hidden = true
+            } else {
+                if cell.label.text == "Collapse All" {
+                    cell.filterSwitch.hidden = true
+                } else {
+                    cell.filterSwitch.hidden = false
+                }
+            }
+
+            break
         default:
             break
         }
@@ -135,6 +143,7 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
+    // Row is selected
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
 
@@ -159,13 +168,20 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
             if section.filters[indexPath.row] == "Offering a Deal" {
                 self.deals = !self.deals
             }
+        } else if section.title == "Categories" {
+
         }
 
         switch section.filterType {
         case FilterType.Select:
             filters[indexPath.section].isExpanded = !filters[indexPath.section].isExpanded
             filters[indexPath.section].setSelected(section.filters[indexPath.row])
-            tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.Fade)
+            break
+        case FilterType.Switch:
+            if (!section.isExpanded || section.filters[indexPath.row] == "Collapse All") {
+                filters[indexPath.section].isExpanded = !filters[indexPath.section].isExpanded
+                tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.Fade)
+            }
         default:
             break
         }
