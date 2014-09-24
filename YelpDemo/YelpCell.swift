@@ -25,7 +25,12 @@ class YelpCell: UITableViewCell {
             address.text = restaurant.display_address
             categories.text = restaurant.categories
             distance.text = restaurant.distance
+
             restaurantImage.setImageWithURL(NSURL(string: restaurant.thumbUrl))
+            // Round the image corners
+            restaurantImage.layer.cornerRadius = 5
+            restaurantImage.clipsToBounds = true
+
             ratingImage.setImageWithURL(NSURL(string: restaurant.ratingUrl))
         }
     }
