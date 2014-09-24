@@ -20,7 +20,7 @@ class YelpCell: UITableViewCell {
 
     var restaurant: Restaurant! {
         didSet {
-            restaurantName.text = restaurant.name
+            restaurantName.text = "\(index+1). " + restaurant.name
             reviews.text = restaurant.reviews
             address.text = restaurant.display_address
             categories.text = restaurant.categories
@@ -34,6 +34,8 @@ class YelpCell: UITableViewCell {
             ratingImage.setImageWithURL(NSURL(string: restaurant.ratingUrl))
         }
     }
+
+    var index:Int = 0
 
     override func awakeFromNib() {
         super.awakeFromNib()
