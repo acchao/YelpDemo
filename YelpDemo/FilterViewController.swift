@@ -110,6 +110,10 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableViewAutomaticDimension
+
         var cell = tableView.dequeueReusableCellWithIdentifier("FilterCell") as FilterCell
         var section = filters[indexPath.section] as Filter
 
