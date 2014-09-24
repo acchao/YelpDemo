@@ -23,8 +23,6 @@ Time to complete
  * [ ] Restaurant details page
  
 
-I also messed around with scrollviews as a nonlisted optional task.
-
 Walkthrough of all user stories:
 
 ![Video Walkthrough](Assignment2.gif)
