@@ -12,7 +12,7 @@ protocol FilterViewControllerDelegate {
     func filterViewControllerSearchButtonClicked(filterViewController: FilterViewController)
 }
 
-class FilterViewController: UIViewController, UITableViewDataSource, UITableViewDelegate  {
+class FilterViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FilterCellDelegate {
 
     var delegate: FilterViewControllerDelegate!
 
@@ -23,39 +23,87 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         case Switch
     }
 
-    class Filter {
+    class Section{
         var title: String!
         var filterType: FilterType
         var isExpanded: Bool
-        var filters: [String!]
+        var filters: [Filter]
         var selected: String!
-        init (title: String, filterType: FilterType, isExpanded: Bool, filters: [String!]) {
+        init (title: String, filterType: FilterType, isExpanded: Bool, filters: [Filter]) {
             self.title = title
             self.filterType = filterType
             self.isExpanded = isExpanded
             self.filters = filters
-            self.selected = filters[0]
+            self.selected = filters[0].title
         }
 
         convenience init() {
-            self.init(title: "blank", filterType: FilterType.Select, isExpanded: true, filters: ["blank"])
+            self.init(title: "blank", filterType: FilterType.Select, isExpanded: true, filters: [Filter(title: "blank", value: 0)])
         }
 
-        func setSelected(selected: String!) {
-            self.selected = selected
+        func setSelected(selected: Filter) {
+            self.selected = selected.title
+        }
+
+        func setSwitchFilterValue(row: Int) {
+            self.filters[row].value = self.filters[row].value == 1 ? 0 : 1
         }
     }
 
-    var filters = [
-        Filter(title: "Sort By", filterType: FilterType.Select, isExpanded: false, filters: ["Best Match", "Distance", "Highest Rated"]),
-        Filter(title: "Radius", filterType: FilterType.Select, isExpanded: false, filters: [".5 miles", "1 mile", "5 miles"]),
-        Filter(title: "General Features", filterType: FilterType.Switch, isExpanded: true, filters: ["Open Now", "Hot & New", "Offering a Deal", "Delivery"]),
-        Filter(title: "Categories", filterType: FilterType.Switch, isExpanded: false, filters: ["breakfast_brunch",
-            "british", "buffets", "bulgarian", "burgers", "burmese", "cafes", "cafeteria", "cajun", "cambodian",
-            "newcanadian", "canteen", "caribbean", "dominican", "haitian", "puertorican", "trinidadian",
-            "catalan", "Collapse All"])
-    ]
+    struct Filter{
+        var title: String!
+        var value: Int
+    }
 
+    var filterMenu = [
+        Section(title: "Sort By", filterType: FilterType.Select, isExpanded: false,
+            filters: [
+                Filter(title: "Best Match", value: 0),
+                Filter(title: "Distance", value: 1),
+                Filter(title: "Highest Rated", value: 2)
+            ]
+        ),
+        Section(title: "Radius", filterType: FilterType.Select, isExpanded: false,
+            filters: [
+                Filter(title: ".5 miles", value: 800),
+                Filter(title: "1 miles", value: 1600),
+                Filter(title: "5 miles", value: 4000),
+            ]
+        ),
+        Section(title: "General Features", filterType: FilterType.Switch, isExpanded: true,
+            filters: [
+                Filter(title: "Open Now", value: 0),
+                Filter(title: "Hot & New", value: 0),
+                Filter(title: "Offering a Deal", value: 0),
+                Filter(title: "Delivery", value: 0),
+            ]
+        ),
+        Section(title: "Categories", filterType: FilterType.Switch, isExpanded: false,
+            filters: [
+                Filter(title: "breakfast_brunch", value: 0),
+                Filter(title: "british", value: 0),
+                Filter(title: "buffets", value: 0),
+                Filter(title: "bulgarian", value: 0),
+                Filter(title: "burgers", value: 0),
+                Filter(title: "burmese", value: 0),
+                Filter(title: "cafes", value: 0),
+                Filter(title: "cafeteria", value: 0),
+                Filter(title: "cajun", value: 0),
+                Filter(title: "cambodian", value: 0),
+                Filter(title: "newcanadian", value: 0),
+                Filter(title: "cambodian", value: 0),
+                Filter(title: "canteen", value: 0),
+                Filter(title: "caribbean", value: 0),
+                Filter(title: "chinese", value: 0),
+                Filter(title: "dominican", value: 0),
+                Filter(title: "haitian", value: 0),
+                Filter(title: "puertorican", value: 0),
+                Filter(title: "trinidadian", value: 0),
+                Filter(title: "catalan", value: 0),
+                Filter(title: "Collapse", value: 0),
+            ]
+        )
+    ]
 
     // Search Queries
     var searchTerm: String!
@@ -87,17 +135,21 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         dismissViewControllerAnimated(true, completion: nil)
     }
 
+    func filterCellSwitchClicked(filterCell: FilterCell) {
+        filterMenu[filterCell.section].setSwitchFilterValue(filterCell.row)
+    }
+
     // Sections
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return filters.count
+        return filterMenu.count
     }
 
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return filters[section].title
+        return filterMenu[section].title
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var section = filters[section]
+        var section = filterMenu[section]
         if (section.isExpanded){
             return section.filters.count
         } else {
@@ -112,9 +164,13 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.rowHeight = UITableViewAutomaticDimension
 
         var cell = tableView.dequeueReusableCellWithIdentifier("FilterCell") as FilterCell
-        var section = filters[indexPath.section] as Filter
+        var section = filterMenu[indexPath.section] as Section
+        var filter = section.filters[indexPath.row] as Filter
 
-        cell.label.text = section.filters[indexPath.row]
+        cell.section = indexPath.section
+        cell.row = indexPath.row
+        cell.delegate = self
+        cell.label.text = section.filters[indexPath.row].title
 
         switch section.filterType {
         case FilterType.Select:
@@ -134,7 +190,7 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
                     cell.filterSwitch.hidden = false
                 }
             }
-
+            cell.filterSwitch.setOn(filter.value == 1, animated: true)
             break
         default:
             break
@@ -147,41 +203,36 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
 
-        var section = filters[indexPath.section]
+        var section = filterMenu[indexPath.section]
+        var filter = section.filters[indexPath.row]
         if section.title == "Sort By" {
-            if section.filters[indexPath.row] == "Best Match" {
-                self.sort = 0
-            } else if section.filters[indexPath.row] == "Distance" {
-                self.sort = 1
-            } else if section.filters[indexPath.row] == "Highest Rated" {
-                self.sort = 2
-            }
+            self.sort = filter.value
         } else if section.title == "Radius" {
-            if section.filters[indexPath.row] == ".5 miles" {
-                self.radius = 800
-            } else if section.filters[indexPath.row] == "1 mile" {
-                self.radius = 1600
-            } else if section.filters[indexPath.row] == "5 miles" {
-                self.radius = 5000
-            }
+            self.radius = filter.value
         } else if section.title == "General Features" {
-            if section.filters[indexPath.row] == "Offering a Deal" {
-                self.deals = !self.deals
+            if filter.title == "Offering a Deal" {
+                self.deals = (filter.value == 1)
             }
+
         } else if section.title == "Categories" {
 
         }
 
         switch section.filterType {
         case FilterType.Select:
-            filters[indexPath.section].isExpanded = !filters[indexPath.section].isExpanded
-            filters[indexPath.section].setSelected(section.filters[indexPath.row])
+            filterMenu[indexPath.section].isExpanded = !section.isExpanded
+            filterMenu[indexPath.section].setSelected(filter)
+            tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.Fade)
             break
         case FilterType.Switch:
-            if (!section.isExpanded || section.filters[indexPath.row] == "Collapse All") {
-                filters[indexPath.section].isExpanded = !filters[indexPath.section].isExpanded
+            if (!section.isExpanded || filter.title == "Collapse All") {
+                filterMenu[indexPath.section].isExpanded = !section.isExpanded
                 tableView.reloadSections(NSIndexSet(index: indexPath.section), withRowAnimation: UITableViewRowAnimation.Fade)
+            } else {
+                filterMenu[indexPath.section].setSwitchFilterValue(indexPath.row)
+                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
             }
+
         default:
             break
         }

@@ -8,14 +8,28 @@
 
 import UIKit
 
+protocol FilterCellDelegate {
+    func filterCellSwitchClicked(filterCell: FilterCell)
+}
+
 class FilterCell: UITableViewCell {
 
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var filterSwitch: UISwitch!
 
+    var delegate: FilterCellDelegate!
+
+    var section: Int = 0
+    var row: Int = 0
+
+    @IBAction func onSwitchChanged(sender: AnyObject) {
+        delegate.filterCellSwitchClicked(self)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
