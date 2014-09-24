@@ -79,10 +79,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
+        tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
 
         var cell = tableView.dequeueReusableCellWithIdentifier("YelpCell") as YelpCell
-
+        cell.index = indexPath.row
         cell.restaurant = self.restaurants[indexPath.row]
         return cell
 
