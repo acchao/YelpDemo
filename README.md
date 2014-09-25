@@ -21,6 +21,8 @@ Time to complete
  * [ ] Custom switch
  * [ ] Restaurant details page
 
+=======
+
 Walkthrough of all user stories:
 
 ![Video Walkthrough](Assignment2.gif)
