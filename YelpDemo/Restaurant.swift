@@ -25,22 +25,22 @@ class Restaurant: NSObject {
 
         var location: NSDictionary = dictionary["location"] as NSDictionary
         var addressArray = location["address"] as NSArray
-        var address = addressArray[0] as? String
-        var city = location["city"] as? String
-        var state_code = location["state_code"] as? String
-        var postal_code = location["postal_code"] as? String
-        display_address = "\(address!), \(city!), \(state_code!), \(postal_code!)"
 
-//        var cats = dictionary["categories"] as NSArray
-//        var cat2: String!
-//        for cat in cats {
-//            var catStr = cat[0] as? String
-//            cat2 = catStr! + ", " + cat2
-//        }
-        distance = dictionary["distance"] as? String
-        distance = "2 mi"
-        thumbUrl = dictionary["image_url"] as? String
-        ratingUrl = dictionary["rating_img_url"] as? String
+        var address: String! = ""
+        if addressArray.count != 0 {
+           var address = addressArray[0] as? String ?? ""
+        }
+
+        var city = location["city"] as? String ?? ""
+        var state_code = location["state_code"] as? String ?? ""
+        var postal_code = location["postal_code"] as? String ?? ""
+
+        display_address = "\(address), \(city), \(state_code), \(postal_code)"
+
+        distance = dictionary["distance"] as? String ?? "2 mi"
+        thumbUrl = dictionary["image_url"] as? String ?? ""
+        ratingUrl = dictionary["rating_img_url"] as? String ?? ""
+
     }
 
 

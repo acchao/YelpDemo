@@ -53,15 +53,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // Reloads the Table View with Box Office Movies
     func reloadTableView()
     {
-        client.searchWithTerm(self.searchTerm, sort: self.sort, categories: self.categories, radius: self.radius, deals: self.deals, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            var restaurantDictionaries = (response as NSDictionary)["businesses"] as [NSDictionary]
+        var parameters = ["location": "San Francisco"]
+        if !self.searchTerm.isEmpty {
+            parameters["term"] = self.searchTerm
+        }
+        if !self.categories.isEmpty {
+            parameters["category_filter"] = self.categories
+        }
+        if self.sort != 0 {
+            parameters["sort"] = "\(self.sort)"
+        }
+        if self.deals != 0 {
+            parameters["deals_filter"] = "\(self.deals)"
+        }
+        if self.radius != 0 {
+            parameters["radius_filter"] = "\(self.radius)"
+        }
 
-            self.restaurants = []
-            self.restaurants = restaurantDictionaries.map({ (business: NSDictionary) -> Restaurant in
-                Restaurant(dictionary: business)
-            })
+        client.searchWithTerm(parameters, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                var restaurantDictionaries = (response as NSDictionary)["businesses"] as [NSDictionary]
 
-            self.yelpTableView.reloadData()
+                self.restaurants = []
+                self.restaurants = restaurantDictionaries.map({ (business: NSDictionary) -> Restaurant in
+                    Restaurant(dictionary: business)
+                })
+                self.yelpTableView.reloadData()
+            
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
                 println(error)
         }
