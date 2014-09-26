@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4964029919D5CEED00377582 /* Filters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4964029819D5CEED00377582 /* Filters.swift */; };
 		4978423B19D1999600D2ED24 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978423A19D1999600D2ED24 /* AppDelegate.swift */; };
 		4978423D19D1999600D2ED24 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978423C19D1999600D2ED24 /* ViewController.swift */; };
 		4978424019D1999600D2ED24 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4978423E19D1999600D2ED24 /* Main.storyboard */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		1F1D4AE7A45C4F4BA2573E7C /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		4964029819D5CEED00377582 /* Filters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filters.swift; sourceTree = "<group>"; };
 		4978423519D1999600D2ED24 /* YelpDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YelpDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4978423919D1999600D2ED24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4978423A19D1999600D2ED24 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				497D1E8119D2347000EBE9B2 /* Restaurant.swift */,
+				4964029819D5CEED00377582 /* Filters.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				497D1E8619D25A2F00EBE9B2 /* FilterCell.swift in Sources */,
+				4964029919D5CEED00377582 /* Filters.swift in Sources */,
 				497D1E8419D2441100EBE9B2 /* FilterViewController.swift in Sources */,
 				497D1E8219D2347000EBE9B2 /* Restaurant.swift in Sources */,
 				4978426219D19E8700D2ED24 /* YelpClient.swift in Sources */,

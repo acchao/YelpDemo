@@ -28,7 +28,7 @@ class Restaurant: NSObject {
 
         var address: String! = ""
         if addressArray.count != 0 {
-           var address = addressArray[0] as? String ?? ""
+            address = addressArray[0] as? String ?? ""
         }
 
         var city = location["city"] as? String ?? ""

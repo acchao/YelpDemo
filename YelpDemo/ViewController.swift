@@ -26,7 +26,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // Search Queries
     var searchTerm: String!
     var sort: Int = 0
-    var categories: String! = ""
+    var categories = [String]()
     var radius: Int = 800
     var deals: Bool = false
 
@@ -53,31 +53,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // Reloads the Table View with Box Office Movies
     func reloadTableView()
     {
-        var parameters = ["location": "San Francisco"]
-        if !self.searchTerm.isEmpty {
-            parameters["term"] = self.searchTerm
-        }
-        if !self.categories.isEmpty {
-            parameters["category_filter"] = self.categories
-        }
-        if self.sort != 0 {
-            parameters["sort"] = "\(self.sort)"
-        }
-        if self.deals != 0 {
-            parameters["deals_filter"] = "\(self.deals)"
-        }
-        if self.radius != 0 {
-            parameters["radius_filter"] = "\(self.radius)"
-        }
+        client.searchWithTerm(self.searchTerm, sort: self.sort, category_filter: self.categories, radius_filter:self.radius, deals_filter: self.deals, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
 
-        client.searchWithTerm(parameters, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-                var restaurantDictionaries = (response as NSDictionary)["businesses"] as [NSDictionary]
+            var restaurantDictionaries = (response as NSDictionary)["businesses"] as [NSDictionary]
 
-                self.restaurants = []
-                self.restaurants = restaurantDictionaries.map({ (business: NSDictionary) -> Restaurant in
-                    Restaurant(dictionary: business)
-                })
-                self.yelpTableView.reloadData()
+            self.restaurants = []
+            self.restaurants = restaurantDictionaries.map({ (business: NSDictionary) -> Restaurant in
+                Restaurant(dictionary: business)
+            })
+            self.yelpTableView.reloadData()
             
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
                 println(error)
